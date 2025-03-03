@@ -13,7 +13,7 @@ fi
 
 MISSING=()
 [ ! "$PACT_BROKER_BASE_URL" ] && MISSING+=("PACT_BROKER_BASE_URL")
-[ ! "$application_name" ] && MISSING+=("application_name")
+[ ! "$APPLICATION_NAME" ] && MISSING+=("APPLICATION_NAME")
 
 if [ ${#MISSING[@]} -gt 0 ]; then
   echo "ERROR: The following environment variables are not set:"
@@ -93,7 +93,7 @@ fi
 
 echo "
   PACT_BROKER_BASE_URL: '$PACT_BROKER_BASE_URL'
-  application_name: '$application_name'
+  application_name: '$APPLICATION_NAME'
   VERSION: '$VERSION'
   to: '$to'
   COMMAND: '$COMMAND'
@@ -106,7 +106,7 @@ docker run --rm \
   $PACT_BROKER_PASSWORD_ENV_VAR_CMD \
   pactfoundation/pact-cli:latest \
   broker can-i-deploy \
-  --pacticipant "$application_name" \
+  --pacticipant "$APPLICATION_NAME" \
   $VERSION \
   $COMMAND \
   $DRY_RUN_COMMAND \

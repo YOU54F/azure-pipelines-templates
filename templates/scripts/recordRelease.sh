@@ -2,7 +2,7 @@
 
 MISSING=()
 [ ! "$PACT_BROKER_BASE_URL" ] && MISSING+=("PACT_BROKER_BASE_URL")
-[ ! "$application_name" ] && MISSING+=("application_name")
+[ ! "$APPLICATION_NAME" ] && MISSING+=("APPLICATION_NAME")
 [ ! "$environment" ] && MISSING+=("environment")
 
 if [ "$COMMIT" == "" ]; then
@@ -33,7 +33,7 @@ fi
 
 echo "
   PACT_BROKER_BASE_URL: '$PACT_BROKER_BASE_URL'
-  application_name: '$application_name'
+  application_name: '$APPLICATION_NAME'
   version: '$COMMIT'
   environment: '$environment'"
 
@@ -44,6 +44,6 @@ docker run --rm \
   $PACT_BROKER_PASSWORD_ENV_VAR_CMD \
   pactfoundation/pact-cli:latest \
   broker record-release \
-  --pacticipant "$application_name" \
+  --pacticipant "$APPLICATION_NAME" \
   --version $COMMIT \
   --environment $environment

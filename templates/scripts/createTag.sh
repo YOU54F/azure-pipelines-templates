@@ -2,7 +2,7 @@
 
 MISSING=()
 [ ! "$PACT_BROKER_BASE_URL" ] && MISSING+=("PACT_BROKER_BASE_URL")
-[ ! "$application_name" ] && MISSING+=("application_name")
+[ ! "$APPLICATION_NAME" ] && MISSING+=("APPLICATION_NAME")
 [ ! "$tag" ] && MISSING+=("tag")
 
 if [ "$COMMIT" == "" ]; then
@@ -30,7 +30,7 @@ fi
 
 echo """
 PACT_BROKER_BASE_URL: $PACT_BROKER_BASE_URL
-application_name: $application_name
+application_name: $APPLICATION_NAME
 version: $COMMIT
 tag: $tag
 """
@@ -62,7 +62,7 @@ docker run --rm \
   -e GITHUB_SHA=$GITHUB_SHA \
   pactfoundation/pact-cli:latest \
   broker create-version-tag \
-  --pacticipant "$application_name" \
+  --pacticipant "$APPLICATION_NAME" \
   --version "$COMMIT" \
   --tag "$tag" \
   $AUTO_CREATE_VERSION_COMMAND \
