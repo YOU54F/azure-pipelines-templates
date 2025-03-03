@@ -22,8 +22,19 @@ parameters:
     default: ""
 
 steps:
+- bash: |
+    if [ -f $(build.sourcesdirectory)/azure-pipelines-templates/templates/scripts/createOrUpdateVersion.sh ]; then
+      echo "##vso[task.setVariable variable=pact_templates_checked_out]true"
+    else
+      echo "##vso[task.setVariable variable=pact_templates_checked_out]false"
+    else
+      echo "##vso[task.setVariable variable=pact_templates_checked_out]false"
+    fi
+  displayName: check if pact_templates repo checked out
+- checkout: pact_templates
+  condition: eq(variables.pact_templates_checked_out, 'false')
 - script: |
-    ./templates/scripts/createOrUpdateVersion.sh
+    $(build.sourcesdirectory)/azure-pipelines-templates/templates/scripts/createOrUpdateVersion.sh
   displayName: Create or Update Version
   env:
     PACT_BROKER_BASE_URL: ${{ inputs.broker_url || env.PACT_BROKER_BASE_URL }} 

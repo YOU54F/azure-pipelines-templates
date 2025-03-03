@@ -21,8 +21,17 @@ parameters:
     type: boolean
 
 steps:
+- bash: |
+    if [ -f $(build.sourcesdirectory)/azure-pipelines-templates/templates/scripts/deleteBranch.sh ]; then
+      echo "##vso[task.setVariable variable=pact_templates_checked_out]true"
+    else
+      echo "##vso[task.setVariable variable=pact_templates_checked_out]false"
+    fi
+  displayName: check if pact_templates repo checked out
+- checkout: pact_templates
+  condition: eq(variables.pact_templates_checked_out, 'false')
 - script: |
-    ./templates/scripts/deleteBranch.sh
+    $(build.sourcesdirectory)/azure-pipelines-templates/templates/scripts/deleteBranch.sh
   displayName: Delete Branch
   env: 
     PACT_BROKER_BASE_URL: ${{ coalesce(parameters.broker_url, variables.PACT_BROKER_BASE_URL) }}

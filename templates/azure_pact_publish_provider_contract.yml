@@ -41,8 +41,17 @@ parameters:
   - name: tag # description: "tag to associate version of pact with"
     default: ""
 steps:
+- bash: |
+    if [ -f $(build.sourcesdirectory)/azure-pipelines-templates/templates/scripts/publishOAS.sh ]; then
+      echo "##vso[task.setVariable variable=pact_templates_checked_out]true"
+    else
+      echo "##vso[task.setVariable variable=pact_templates_checked_out]false"
+    fi
+  displayName: check if pact_templates repo checked out
+- checkout: pact_templates
+  condition: eq(variables.pact_templates_checked_out, 'false')
 - script: |
-    ./templates/scripts/publishOAS.sh
+    $(build.sourcesdirectory)/azure-pipelines-templates/templates/scripts/publishOAS.sh
   displayName: Record Deployment
   env: 
     PACT_BROKER_BASE_URL: ${{ coalesce(parameters.broker_url, variables.PACT_BROKER_BASE_URL) }}

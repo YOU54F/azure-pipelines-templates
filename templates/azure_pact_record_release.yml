@@ -18,8 +18,17 @@ parameters:
   - name: version # "The version of your application (defaults to version of the code where the action is run from)"
     default: ""
 steps:
+- bash: |
+    if [ -f $(build.sourcesdirectory)/azure-pipelines-templates/templates/scripts/recordRelease.sh ]; then
+      echo "##vso[task.setVariable variable=pact_templates_checked_out]true"
+    else
+      echo "##vso[task.setVariable variable=pact_templates_checked_out]false"
+    fi
+  displayName: check if pact_templates repo checked out
+- checkout: pact_templates
+  condition: eq(variables.pact_templates_checked_out, 'false')
 - script: |
-    ./templates/scripts/recordRelease.sh
+    $(build.sourcesdirectory)/azure-pipelines-templates/templates/scripts/recordRelease.sh
   displayName: Record Release
   env: 
     PACT_BROKER_BASE_URL: ${{ coalesce(parameters.broker_url, variables.PACT_BROKER_BASE_URL) }}
