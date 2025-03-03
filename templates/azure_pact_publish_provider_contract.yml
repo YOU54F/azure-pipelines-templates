@@ -52,7 +52,7 @@ steps:
   condition: eq(variables.pact_templates_checked_out, 'false')
 - script: |
     $(build.sourcesdirectory)/azure-pipelines-templates/templates/scripts/publishOAS.sh
-  displayName: Record Deployment
+  displayName: Publish provider contract
   env: 
     PACT_BROKER_BASE_URL: ${{ coalesce(parameters.broker_url, variables.PACT_BROKER_BASE_URL) }}
     PACT_BROKER_TOKEN: ${{ coalesce(parameters.token, variables.PACT_BROKER_TOKEN) }}
