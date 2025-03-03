@@ -25,10 +25,8 @@ steps:
     if [ -f $(build.sourcesdirectory)/azure-pipelines-templates/templates/scripts/publishPactFiles.sh ]; then
       echo "##vso[task.setVariable variable=pact_templates_checked_out]true"
     fi
-- task: MyTask@1
-  condition: eq(variables.pact_templates_checked_out, 'true')
-- ${{ if eq(variables['pact_templates_checked_out'], 'false') }}:
-  - checkout: pact_templates
+- checkout: pact_templates
+  condition: eq(variables.pact_templates_checked_out, 'false')
 - script: |
     $(build.sourcesdirectory)/azure-pipelines-templates/templates/scripts/publishPactFiles.sh
   displayName: ✉️  Publish Pacts
