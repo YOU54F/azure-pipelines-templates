@@ -56,6 +56,7 @@ fi
 
 echo """
 PACT_BROKER_BASE_URL: $PACT_BROKER_BASE_URL
+application_name: $application_name
 contract: $contract
 verification_results: $verification_results
 verification_exit_code: $verification_exit_code

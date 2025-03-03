@@ -15,7 +15,7 @@ parameters:
   - name: application_name # "The name of your application (usually project name)"
     default: false
   - name: contract # "Location of the contract file"
-    default: false
+    default: ""
   - name: specification # "The contract specification Default: oas"
     default: ""
   - name: contract_content_type # "The content type. eg. application/yml or application/json. defaults to application/yml"
