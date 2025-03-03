@@ -13,7 +13,7 @@ parameters:
   - name: password # description: "Your pact broker password"
     default: ""
   - name: application_name # "The name of your application (usually project name)"
-    default: false
+    default: ""
   - name: contract # "Location of the contract file"
     default: ""
   - name: specification # "The contract specification Default: oas"
