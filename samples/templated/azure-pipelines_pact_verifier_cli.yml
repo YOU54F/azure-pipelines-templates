@@ -1,0 +1,7 @@
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- template: templates/azure_pact_verifier_cli.yml@self
+- script: pact_verifier_cli --help
+  displayName: pact_verifier_cli

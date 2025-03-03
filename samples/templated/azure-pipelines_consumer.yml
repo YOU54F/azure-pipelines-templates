@@ -1,0 +1,33 @@
+# Pact consumer workflow
+# Test (Generate pacts) -> Publish pacts -> Can-I-Deploy to Prod (with Polling) -> Record Deployment (master branch)
+# Webhooks are setup for provider, to trigger on contract_requiring_verification_published
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - template: templates/azure_pact_variables.yml@self # re-use common variables, to set commit, branch and build uri
+  - name: PACTICIPANT
+    value: "pactflow-example-consumer-dotnet"
+  - name: PACT_BROKER_BASE_URL
+    value: https://testdemo.pactflow.io
+
+steps:
+- script: |
+    dotnet test tests
+  displayName: ✅  Test
+
+- template: templates/azure_pact_publish_with_params.yml@self # by default it uses main, use self to read from current repo
+  parameters:
+    pactfiles: pacts
+    token: $(PACT_BROKER_TOKEN) # token should be set as secret variable, in users pipeline
+- template: templates/azure_pact_can_i_deploy_with_params.yml
+  parameters:
+    to_environment: production
+    application_name: $(PACTICIPANT)
+    token: $(PACT_BROKER_TOKEN)
+- template: templates/azure_pact_record_deployment_with_params.yml
+  parameters:
+    environment: production
+    application_name: $(PACTICIPANT)
+    token: $(PACT_BROKER_TOKEN)

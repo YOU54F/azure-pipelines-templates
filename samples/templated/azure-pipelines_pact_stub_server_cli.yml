@@ -1,0 +1,7 @@
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- template: templates/azure_pact_stub_server.yml@self
+- script: pact-stub-server --help
+  displayName: pact-stub-server

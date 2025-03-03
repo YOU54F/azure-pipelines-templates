@@ -1,0 +1,7 @@
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- template: templates/azure_plugin_cli.yml@self
+- script: pact-plugin-cli --help
+  displayName: pact-plugin-cli

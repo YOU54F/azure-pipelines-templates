@@ -1,0 +1,7 @@
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- template: templates/azure_pact_cli.yml@self
+- script: pact-broker version
+  displayName: "pact-broker version"
