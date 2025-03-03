@@ -1,9 +1,8 @@
-<!-- TODO - Update to Azure syntax -->
-
-
 # publish-provider-contract action
 
-Publishes OAS and test evidence to a Pactflow server for 'bi-directional' testing (relies on [actions/checkout](https://github.com/marketplace/actions/checkout) being called first).
+> Publishes OAS and test evidence to a Pactflow server for 'bi-directional' testing (relies on [actions/checkout](https://github.com/marketplace/actions/checkout) being called first).
+
+See pipeline template, for all available inputs.
 
 ## Pre-Requisities
 
@@ -14,37 +13,51 @@ Publishes OAS and test evidence to a Pactflow server for 'bi-directional' testin
 
 ## Example
 
+This is designed to setup the `azure_publish_provider_contract.yml` template twice, once if the provider verification is successful and once if it fails. If it fails, it will additional pass in a failing verification code to PactFlow, denoting that the self-verification was unsuccessful.
+
 ```yaml
-jobs:
-  pact-publish-oas-action:
-    runs-on: ubuntu-latest
-    steps:
-      # MANDATORY: Must use 'checkout' first
-      - uses: actions/checkout@v4
-      - name: Publish provider contract on passing test run
-        if: success()
-        uses: pactflow/actions/publish-provider-contract@v2
-        with:
-          version: "1.2.3"
-          application_name: "my-api-provider"
-          broker_url: ${{ secrets.PACT_BROKER_BASE_URL }}
-          token: ${{ secrets.PACT_BROKER_TOKEN }}
-          contract: src/oas/user.yml
-          contract_content_type: application/yaml # optional, defaults to application/yml
-          verification_results: src/results/report.md
-      - name: Publish provider contract on failing test run
-        # ensure we publish results even if the tests fail
-        if: failure()
-        uses: pactflow/actions/publish-provider-contract@v2
-        with:
-          version: "1.2.3"
-          application_name: "my-api-provider"
-          broker_url: ${{ secrets.PACT_BROKER_BASE_URL }}
-          token: ${{ secrets.PACT_BROKER_TOKEN }}
-          contract: src/oas/user.yml
-          verification_results: src/results/report.md
-          # ensure we set the verification_exit_code to ensure we upload a failing self-verification result
-          verification_exit_code: 1 # defaults to 0 (success)
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - template: templates/azure_pact_variables.yml@pact_templates # re-use common variables, to set commit, branch and build uri
+  - name: PACTICIPANT
+    value: "pactflow-example-consumer-dotnet"
+  - name: PACT_BROKER_BASE_URL
+    value: https://testdemo.pactflow.io
+
+resources:
+  repositories:
+    - repository: pact_templates
+      type: github
+      name: you54f/azure-pipelines-templates
+      endpoint: azure-templates-pact-github # azure service connection to allow read-only access to github repo
+      # ref: refs/heads/templates # point to a commit / branch / tag
+
+steps:
+# perform your tests here
+- template: templates/azure_publish_provider_contract.yml@pact_templates
+  displayName: Publish provider contract on passing test run
+  parameters:
+    application_name: $(PACTICIPANT) # The pacticipant name of which the branch belongs to
+    token: $(PACT_BROKER_TOKEN)
+    tag: prod
+    version: "1.2.3" # autodetected if not provided
+    contract: src/oas/user.yml
+    contract_content_type: application/yaml # optional, defaults to application/yml
+    verification_results: src/results/report.md
+- template: templates/azure_publish_provider_contract.yml@pact_templates
+  condition: failed()
+  displayName: Publish provider contract on failing test run
+  parameters:
+    application_name: $(PACTICIPANT) # The pacticipant name of which the branch belongs to
+    token: $(PACT_BROKER_TOKEN)
+    tag: prod
+    version: "1.2.3" # autodetected if not provided
+    contract: src/oas/user.yml
+    contract_content_type: application/yaml # optional, defaults to application/yml
+    verification_results: src/results/report.md
+    verification_exit_code: 1 # defaults to 0 (success)
 ```
 
 ## Notes

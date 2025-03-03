@@ -34,13 +34,39 @@ Available Pact CLI applications
 
 There are a few ways you can re-use the templates, in your Azure Pipelines workflow.
 
-1. Clone this repository directly in your work, and reference the templates by path.
-2. Create an [Azure Service Connection - GitHub Repos](https://learn.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops#github-service-connection) to GitHub, in order to allow connection to this template repository. Read-only access is sufficient.
+1. Create an [Azure Service Connection - GitHub Repos](https://learn.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops#github-service-connection) to GitHub, in order to allow connection to this template repository. Read-only access is sufficient.
+2. Clone this repository directly in your work, and reference the templates by path.
 3. Mirror this repository, to the same Azure organization that your code resides in. If you mirror to another Azure organization, you will need to create a [Azure Service Connection - Azure Repos](https://learn.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops#azure-repos)
 
 ### Setup your workflow to use the Azure templates
 
-TODO
+1. For each pipeline, create an [Azure Service Connection](https://learn.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops#create-a-service-connection) to connect to GitHub.
+   1. Read-Only access to Contents is sufficient.
+   2. You can scope access to this repository only
+2. Setup a Repository Resource Connection to GitHub, to this template repository
+   1. See the [sample templates](./samples/templates), and update `resources.repositories.repository["pact_templates"].endpoint` to the same of the Azure Service Connection created in Step 1.
+3. You can now reference the templates in your workflow.
+   1. `- template: templates/<template_name>.yml@pact_templates`
+4. Some examples can take parameters, see the associated README file, located next to the template.
+
+     ```yml
+      - template: templates/azure_pact_can_i_deploy.yml@pact_templates
+     parameters:
+       to_environment: production
+       application_name: $(PACTICIPANT)
+       token: $(PACT_BROKER_TOKEN)
+    ```
+
+### Examples of real-world use
+
+1. Consumer
+   1. CDCT - Pact-Net
+      1. [Consumer Pipeline](https://github.com/YOU54F/example-consumer-dotnet/blob/templates_test/azure-pipelines.yml) (Publish Pacts -> Can-I-Deploy -> Record-Deployment)
+2. Provider
+   1. CDCT - Pact-Net
+      1. [Provider Pipeline](https://github.com/YOU54F/example-provider-dotnet/blob/templates_test/azure-pipelines.yml)
+      2. [Provider Pipeline - Contract Requiring Verification Published](https://github.com/YOU54F/example-provider-dotnet/blob/templates_test/azure-pipelines-contract_requiring_verification_published.yml)
+         1. [Webhooks](./webhooks/azure-pipelines-contract_requiring_verification_published-webhook.md)
 
 ## Inspiration
 

@@ -1,25 +1,33 @@
-<!-- TODO - Update to Azure syntax -->
-
 # publish-pact-files action
 
-Publishes pactfiles to a Pactflow server (relies on [actions/checkout](https://github.com/marketplace/actions/checkout) being called first).
+> Publishes pact files to a Pact Broker
+
+See pipeline template, for all available inputs.
 
 ## Example
 
 ```yaml
-jobs:
-  publish-pact-files:
-    runs-on: ubuntu-latest
-    steps:
-      # MANDATORY: Must use 'checkout' first
-      - uses: actions/checkout@v4
-      - uses: pactflow/actions/publish-pact-files@v2
-        with:
-          pactfiles: src/pactfiles
-          version: "1.2.3" # optional, defaults to git sha if not specified
-          branch: main # optional, defaults to git branch if not specified
-          tag: main # optional, defaults to not set if not specified
-          tag_with_git_branch: false # optional, defaults to not false if not set. will auto tag with user specified branch, or set to auto detected branch
-          broker_url: ${{ secrets.PACT_BROKER_BASE_URL }}
-          token: ${{ secrets.PACT_BROKER_TOKEN }}
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - template: templates/azure_pact_variables.yml@pact_templates # re-use common variables, to set commit, branch and build uri
+  - name: PACTICIPANT
+    value: "pactflow-example-consumer-dotnet"
+  - name: PACT_BROKER_BASE_URL
+    value: https://testdemo.pactflow.io
+
+resources:
+  repositories:
+    - repository: pact_templates
+      type: github
+      name: you54f/azure-pipelines-templates
+      endpoint: azure-templates-pact-github # azure service connection to allow read-only access to github repo
+      # ref: refs/heads/templates # point to a commit / branch / tag
+
+steps:
+- template: templates/azure_pact_publish.yml@pact_templates
+  parameters:
+    pactfiles: pacts
+    token: $(PACT_BROKER_TOKEN) # token should be set as secret variable, in users pipeline
 ```

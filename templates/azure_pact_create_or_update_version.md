@@ -1,25 +1,36 @@
-<!-- TODO - Update to Azure syntax -->
-
-
 # create-or-update-version action
 
-Create or update pacticipant version by version number
+> Create or update pacticipant version by version number
+
+See pipeline template, for all available inputs.
 
 ## Example
 
 ```yml
-jobs:
-  create-or-update-version:
-    runs-on: ubuntu-latest
-    steps:
-      # MANDATORY: Must use 'checkout' first
-      - uses: actions/checkout@v4
-      - uses: pactflow/actions/create-or-update-version@v2
-        with:
-          version: "1.2.3" # optional, defaults to git sha if not specified
-          branch: "test" # optional, defaults to git branch if not specified
-          tag: "test" # optional
-          application_name: "my-app"
-          broker_url: ${{ secrets.PACT_BROKER_BASE_URL }}
-          token: ${{ secrets.PACT_BROKER_TOKEN }}
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - template: templates/azure_pact_variables.yml@pact_templates # re-use common variables, to set commit, branch and build uri
+  - name: PACTICIPANT
+    value: "pactflow-example-consumer-dotnet"
+  - name: PACT_BROKER_BASE_URL
+    value: https://testdemo.pactflow.io
+
+resources:
+  repositories:
+    - repository: pact_templates
+      type: github
+      name: you54f/azure-pipelines-templates
+      endpoint: azure-templates-pact-github # azure service connection to allow read-only access to github repo
+      # ref: refs/heads/templates # point to a commit / branch / tag
+
+steps:
+- template: templates/azure_create_or_update_version.yml@pact_templates
+  parameters:
+    application_name: $(PACTICIPANT)
+    token: $(PACT_BROKER_TOKEN)
+    version: "1.2.3" # optional, defaults to git sha if not specified
+    branch: "test" # optional, defaults to git branch if not specified
+    tag: "test" # optional
 ```
