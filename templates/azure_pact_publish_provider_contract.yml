@@ -51,6 +51,7 @@ steps:
 - checkout: pact_templates
   condition: eq(variables.pact_templates_checked_out, 'false')
 - script: |
+    printenv
     $(build.sourcesdirectory)/azure-pipelines-templates/templates/scripts/publishOAS.sh
   displayName: Publish provider contract
   env: 
