@@ -63,7 +63,7 @@ steps:
     COMMIT: ${{ coalesce(parameters.version, variables.COMMIT) }}
     BRANCH: ${{ coalesce(parameters.branch, variables.BRANCH) }}
     tag: ${{ coalesce(parameters.tag, variables.tag) }}
-    contract: ${{ coalesce(parameters.contract , variables.contract) }}
+    contract: ${{ coalesce(variables.contract, parameters.contract) }}
     specification: ${{ parameters.specification }}
     contract_content_type: ${{ coalesce(parameters.contract_content_type , variables.contract_content_type) }}
     verification_exit_code: ${{ coalesce(parameters.verification_exit_code , variables.EXIT_CODE) }}
