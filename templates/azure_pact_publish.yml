@@ -21,6 +21,7 @@ parameters:
     default: ""
 
 steps:
+- checkout: pact_templates
 - script: |
     ls $(build.sourcesdirectory)
     $(build.sourcesdirectory)/azure-pipelines-templates/templates/scripts/publishPactFiles.sh
