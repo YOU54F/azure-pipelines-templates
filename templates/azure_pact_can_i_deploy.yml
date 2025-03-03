@@ -39,8 +39,16 @@ parameters:
     default: 10
     type: number
 steps:
+- bash: |
+    if [ -f $(build.sourcesdirectory)/azure-pipelines-templates/templates/scripts/canideployTo.sh ]; then
+      echo "##vso[task.setVariable variable=pact_templates_checked_out]true"
+    fi
+- task: MyTask@1
+  condition: eq(variables.pact_templates_checked_out, 'true')
+- ${{ if eq(variables['pact_templates_checked_out'], 'false') }}:
+  - checkout: pact_templates
 - script: |
-    ./templates/scripts/canideployTo.sh
+    $(build.sourcesdirectory)/azure-pipelines-templates/templates/scripts/canideployTo.sh
   displayName: Can I Deploy
   env: 
     PACT_BROKER_BASE_URL: ${{ coalesce(parameters.broker_url, variables.PACT_BROKER_BASE_URL) }}
