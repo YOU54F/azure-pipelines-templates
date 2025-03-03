@@ -2,9 +2,9 @@
 
 MISSING=()
 [ ! "$PACT_BROKER_BASE_URL" ] && MISSING+=("PACT_BROKER_BASE_URL")
-[ ! "$application_name" ] && MISSING+=("application_name")
-[ ! "$contract" ] && MISSING+=("contract")
-[ ! "$verification_results" ] && MISSING+=("verification_results")
+[ ! "$APPLICATION_NAME" ] && MISSING+=("APPLICATION_NAME")
+[ ! "$CONTRACT" ] && MISSING+=("contract")
+[ ! "$VERIFICATION_RESULTS" ] && MISSING+=("verification_results")
 
 if [ "$COMMIT" == "" ]; then
   COMMIT=$(git rev-parse HEAD)
@@ -16,12 +16,12 @@ if [ ${#MISSING[@]} -gt 0 ]; then
   exit 1
 fi
 
-CONTRACT_FILE_CONTENT_TYPE=${contract_content_type:-"application/yml"}
-VERIFICATION_RESULTS_CONTENT_TYPE=${verification_results_content_type:-"text/plain"}
+CONTRACT_FILE_CONTENT_TYPE=${CONTRACT_CONTENT_TYPE:-"application/yml"}
+VERIFICATION_RESULTS_CONTENT_TYPE=${VERIFICATION_RESULTS_CONTENT_TYPE:-"text/plain"}
 SPECIFICATION=${specification:-"oas"}
-verification_exit_code=${verification_exit_code:-0}
+VERIFICATION_EXIT_CODE=${VERIFICATION_EXIT_CODE:-0}
 
-verifier=${verifier:-'azure-pipeline'}
+VERIFIER_TOOL=${VERIFIER_TOOL:-'azure-pipeline'}
 VERIFICATION_RESULTS_FORMAT=${verification_results_format:-'text'}
 
 if [ "$BRANCH" = "" ]; then
@@ -56,10 +56,10 @@ fi
 
 echo """
 PACT_BROKER_BASE_URL: $PACT_BROKER_BASE_URL
-application_name: $application_name
-contract: $contract
-verification_results: $verification_results
-verification_exit_code: $verification_exit_code
+APPLICATION_NAME: $APPLICATION_NAME
+contract: $CONTRACT
+verification_results: $VERIFICATION_RESULTS
+verification_exit_code: $VERIFICATION_EXIT_CODE
 branch: $BRANCH
 build_url: $build_url
 """
@@ -71,14 +71,14 @@ docker run --rm \
   -e PACT_BROKER_TOKEN=$PACT_BROKER_TOKEN \
   pactfoundation/pact-cli:latest \
   pactflow publish-provider-contract \
-  $contract \
-  --provider $application_name \
+  $CONTRACT \
+  --provider $APPLICATION_NAME \
   --provider-app-version $COMMIT \
   --branch $BRANCH \
   --specification $SPECIFICATION \
   --content-type $CONTRACT_FILE_CONTENT_TYPE \
-  --verification-exit-code=$verification_exit_code \
-  --verification-results $verification_results \
+  --verification-exit-code=$VERIFICATION_EXIT_CODE \
+  --verification-results $VERIFICATION_RESULTS \
   --verification-results-content-type $VERIFICATION_RESULTS_CONTENT_TYPE \
   --verification-results-format $VERIFICATION_RESULTS_FORMAT \
   --verifier $VERIFIER_TOOL \
