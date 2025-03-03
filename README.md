@@ -67,6 +67,8 @@ There are a few ways you can re-use the templates, in your Azure Pipelines workf
       1. [Provider Pipeline](https://github.com/YOU54F/example-provider-dotnet/blob/master/azure-pipelines.yml)
       2. [Provider Pipeline - Contract Requiring Verification Published](https://github.com/YOU54F/example-provider-dotnet/blob/master/azure-pipelines-contract_requiring_verification_published.yml)
          1. [Webhooks](./webhooks/azure-pipelines-contract_requiring_verification_published-webhook.md)
+   2. BDCT - PactFlow / Schemathesis
+      1. [Provider Pipeline](https://github.com/YOU54F/example-bi-directional-provider-dotnet/blob/main/azure-pipelines.yml)
 
 ## Inspiration
 
