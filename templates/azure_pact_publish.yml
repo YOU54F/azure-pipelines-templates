@@ -23,8 +23,7 @@ parameters:
 steps:
 - checkout: pact_templates
 - script: |
-    ls $(build.sourcesdirectory)
-    $(build.sourcesdirectory)/templates/scripts/publishPactFiles.sh
+    $(build.sourcesdirectory)/azure-pipelines-templates/templates/scripts/publishPactFiles.sh
   displayName: ✉️  Publish Pacts
   env:
     PACT_BROKER_BASE_URL: ${{ coalesce(parameters.broker_url, variables.PACT_BROKER_BASE_URL) }}
