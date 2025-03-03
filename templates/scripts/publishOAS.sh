@@ -34,6 +34,13 @@ if [ "$tag" ]; then
   TAG_COMMAND="--tag $tag"
 fi
 
+if [ -z "$BUILD_URI" ]; then
+# todo update to read these env vars
+  build_url="$(System.CollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)"
+else
+  build_url="$BUILD_URI"
+fi
+
 BUILD_URL_COMMAND=
 if [ "$build_url" ]; then
   echo "You set build_url"
